@@ -7,9 +7,16 @@ class Musics {
         $this->db = $db;
     }
 
-    // Funció per obtenir tots els músics
-    public function getAllMusicians() {
-        $stmt = $this->db->query("SELECT * FROM musicians");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getAllMusics() {
+        $query = "SELECT * FROM musicians";
+        $results = $this->db->query($query);
+
+        $musics = [];
+        while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+            $musics[] = $row;
+        }
+
+        return $musics;
     }
 }
+?>

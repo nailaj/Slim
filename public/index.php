@@ -5,52 +5,25 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../models/musics.php';
 
 $app = AppFactory::create();
 
-$app->get('/', function (Request $request, Response $response) {
-    // Connectar a la base de dades
-    $dbPath = __DIR__ . '/../db/musics.db';
-    $db = new SQLite3($dbPath);
+$dbPath = __DIR__ . '/../db/musics.db';
+$db = new SQLite3($dbPath, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
 
-    // Obtenir dades
-    $results = $db->query("SELECT * FROM musicians");
+$musicsModel = new Musics($db);
 
-    // Començar el HTML
-    $htmlContent = <<<HTML
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Músics del Pakistan</title>
-</head>
-<body>
-    <h1>Músics icònics del Pakistan</h1>
-    <h3>Desenvolupament Web en Entorn Servidor – Activitat A23</h3>
-    <p>Consulta de biografies extretes dinàmicament d'una base de dades amb Slim PHP.</p>
-    <h2>Pakistani Musicians</h2>
-    <ul>
-HTML;
+// Ruta principal
+$app->get('/', function (Request $request, Response $response) use ($musicsModel) {
+    $musics = $musicsModel->getAllMusics();
 
-    // Afegir cada músic a la llista
-    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
-        $htmlContent .= "<li>
-            <h3>{$row['name']}</h3>
-            <p>{$row['biography']}</p>
-            <img src=\"{$row['image_url']}\" alt=\"{$row['name']}\" width=\"200\"><br>
-            <a href=\"{$row['website']}\" target=\"_blank\">Web / YouTube</a>
-        </li><hr>";
-    }
+    // Carreguem la vista des de /view/biografia.php
+    ob_start();
+    include __DIR__ . '/../view/biografia.php'; 
+    $output = ob_get_clean();
 
-    $htmlContent .= <<<HTML
-    </ul>
-</body>
-</html>
-HTML;
-
-    // Retornar el contingut
-    $response->getBody()->write($htmlContent);
+    $response->getBody()->write($output);
     return $response->withHeader("Content-Type", "text/html");
 });
 

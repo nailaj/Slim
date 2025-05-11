@@ -2,17 +2,21 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
-    <title>Biografies de Músics Pakistanesos</title>
+    <title>Músics del Pakistan</title>
 </head>
 <body>
-    <h1>Biografies dels Músics Pakistanesos</h1>
-    <?php foreach ($musicians as $musician): ?>
-        <div style="margin-bottom: 30px;">
-            <h2><?php echo htmlspecialchars($musician['name']); ?></h2>
-            <img src="<?php echo htmlspecialchars($musician['image_url']); ?>" alt="Imatge de <?php echo htmlspecialchars($musician['name']); ?>" width="300">
-            <p><?php echo htmlspecialchars($musician['biography']); ?></p>
-            <a href="<?php echo htmlspecialchars($musician['website']); ?>" target="_blank">Visita el seu web</a>
-        </div>
-    <?php endforeach; ?>
+    <h1>Músics del Pakistan</h1>
+    <ul>
+        <?php foreach ($musics as $music): ?>
+            <li>
+                <h3><?= htmlspecialchars($music['name']) ?></h3>
+                <p><?= htmlspecialchars($music['biography']) ?></p>
+                <?php if (!empty($music['image_url'])): ?>
+                    <img src="<?= htmlspecialchars($music['image_url']) ?>" alt="<?= htmlspecialchars($music['name']) ?>" width="300"><br>
+                <?php endif; ?>
+                <a href="<?= htmlspecialchars($music['website']) ?>" target="_blank">Visita la seva web</a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 </body>
 </html>
